@@ -12,7 +12,7 @@ namespace Core.Repository
         Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         //Find(x=>x.id =23)
-        IEnumerable<T> Where(Expression<Func<T, bool>> predicate);
+        Task< IEnumerable<T>> Where(Expression<Func<T, bool>> predicate);
 
         //category.SingleOrDefault(x=>x.name="kalem")
         Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);

@@ -12,14 +12,14 @@ namespace Core.Service
         Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         //Find(x=>x.id =23)
-        Task<IEnumerable<T>> Find(Expression<Func<T, bool>> predicate);
+        Task<IEnumerable<T>> Where(Expression<Func<T, bool>> predicate);
 
         //category.SingleOrDefault(x=>x.name="kalem")
         Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
 
-        Task AddAsync(T entity);
+        Task<T> AddAsync(T entity);
 
-        Task AddRangeAsync(IEnumerable<T> entity);
+        Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entity);
 
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entity);
