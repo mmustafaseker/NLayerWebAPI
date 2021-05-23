@@ -40,18 +40,19 @@ namespace NLayerProject.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("AppDbConnection")));
 
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<NotFoundFilter>();
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IService<>), typeof(Service<>));
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             // bir request Esnasýnda ne kadar ihtiyac duyulsada ayný örneði kullanýcak
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("AppDbConnection")));
 
             services.AddControllers();
 
