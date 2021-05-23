@@ -1,8 +1,13 @@
+using Core.Repository;
+using Core.Service;
 using Core.UnitOfWorks;
 using Data;
+using Data.Repositories;
 using Data.UnitOfworks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +16,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using NLayerProject.API.DTO_s;
+using NLayerProject.API.Filters;
+using Service.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NLayerProject.API.Extensions;
 
 namespace NLayerProject.API
 {
@@ -34,9 +44,23 @@ namespace NLayerProject.API
                 options.UseSqlServer(
                     Configuration.GetConnectionString("AppDbConnection")));
 
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<NotFoundFilter>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IService<>), typeof(Service<>));
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
             // bir request Esnasýnda ne kadar ihtiyac duyulsada ayný örneði kullanýcak
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddControllers();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NLayerProject.API", Version = "v1" });
@@ -52,6 +76,8 @@ namespace NLayerProject.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NLayerProject.API v1"));
             }
+
+            app.UseCustomException();
 
             app.UseHttpsRedirection();
 
